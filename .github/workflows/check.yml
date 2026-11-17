@@ -17,3 +17,7 @@ jobs:
       - run: node check.js
         env:
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+          TWILIO_SID: ${{ secrets.TWILIO_SID }}
+          TWILIO_TOKEN: ${{ secrets.TWILIO_TOKEN }}
+          TWILIO_FROM: ${{ secrets.TWILIO_FROM }}
+          TWILIO_TO: ${{ secrets.TWILIO_TO }}

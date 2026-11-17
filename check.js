@@ -19,8 +19,21 @@ async function pruefe() {
   });
 }
 
+async function anruf(text) {
+  const { TWILIO_SID: sid, TWILIO_TOKEN: tok, TWILIO_FROM: from, TWILIO_TO: to } = process.env;
+  if (!sid || !tok || !from || !to) return log('(Twilio nicht konfiguriert - kein Anruf)');
+  const twiml = '<Response><Pause length="1"/><Say language="de-DE" voice="alice">' + text + '</Say><Pause length="1"/><Say language="de-DE" voice="alice">' + text + '</Say></Response>';
+  const res = await fetch('https://api.twilio.com/2010-04-01/Accounts/' + sid + '/Calls.json', {
+    method: 'POST',
+    headers: { authorization: 'Basic ' + Buffer.from(sid + ':' + tok).toString('base64'), 'content-type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({ To: to, From: from, Twiml: twiml, Timeout: '45' }),
+  });
+  log('Anruf:', res.status);
+}
+
 async function alarm(frei) {
   log('PLATZ FREI:', frei.join(', '));
+  await anruf('Achtung! Volleyball Kurs ' + frei.join(' und ') + ' hat einen freien Platz. Jetzt buchen.').catch((e) => log('Anruf-Fehler:', e.message));
   if (!TOPIC) return log('(kein NTFY_TOPIC gesetzt - kein Alarm gesendet)');
   await fetch('https://ntfy.sh/' + TOPIC, {
     method: 'POST',
