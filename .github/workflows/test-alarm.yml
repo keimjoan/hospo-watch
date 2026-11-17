@@ -1,0 +1,15 @@
+name: Alarm-Test
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: 5 Minuten warten, dann Test-Alarm senden
+        env:
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+        run: |
+          sleep 300
+          curl -sf -H "Title: Test: Alarm funktioniert" -H "Priority: urgent" -H "Tags: white_check_mark" \
+            -d "Das ist ein Test. Wenn du das siehst, kommt der Platz-Alarm an." "https://ntfy.sh/$NTFY_TOPIC"
